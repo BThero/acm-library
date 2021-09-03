@@ -32,12 +32,12 @@ void fft(vector<C> &a) {
 	}
 }
 
-vector<long long> conv(const vector<long long> &a, const vector<long long> &b) {
+vector<ll> conv(const vector<ll> &a, const vector<ll> &b) {
 	if (a.empty() || b.empty()) {
 		return {};
 	}
 
-	vector<long long> res(sz(a) + sz(b) - 1, 0);
+	vector<ll> res(sz(a) + sz(b) - 1, 0);
 	int L = 32 - __builtin_clz(sz(res)), n = (1 << L);
 	vector<C> in(n), out(n);
 
