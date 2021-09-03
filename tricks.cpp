@@ -22,10 +22,10 @@ gp_hash_table<int, int> table;
 gp_hash_table<int, int, chash> table2;
 
 /*
-    rnd.seed(x); 
-    cout << rnd64() << endl;
-    cout << urd(rnd) << endl;
-*/
+   rnd.seed(x); 
+   cout << rnd64() << endl;
+   cout << urd(rnd) << endl;
+ */
 
 mt19937 rnd(chrono::system_clock::now().time_since_epoch().count());
 mt19937_64 rnd64(chrono::system_clock::now().time_since_epoch().count());
