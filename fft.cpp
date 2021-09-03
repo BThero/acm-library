@@ -10,15 +10,15 @@ void fft(vector<C> &a) {
     }
 
     vector<C> root(n);
+    vector<complex<long double>> croot(n);
+    root[1] = croot[1] = 1.0;
 
-    for (int i = n - 1; i; i--) {
-        if (i >= m) {
-            double alph = 2.0 * M_PI * (i ^ m) / n;
-            root[i] = C(cos(alph), sin(alph));
-        }
-        else {
-            root[i] = root[2 * i];
-        }
+    for (int k = 2; k < n; k *= 2) {
+		complex<long double> x = polar(1.0L, acos(-1.0L) / k);
+		
+        for (int i = k; i < 2 * k; i++) {
+            root[i] = croot[i] = i & 1 ? croot[i / 2] * x : croot[i / 2];
+	    }
     }
 
     for (int k = 1; k < n; k *= 2) {
@@ -60,6 +60,46 @@ vector<ll> conv(const vector<ll> &a, const vector<ll> &b) {
 
     for (int i = 0; i < sz(res); i++) {
         res[i] = llround(out[i].imag() / (4 * n));
+    }
+
+    return res;
+}
+
+vector<ll> convMod(const vector<ll> &a, const vector<ll> &b, int M) {
+    if (a.empty() || b.empty()) {
+        return {};
+    }
+    
+    vector<ll> res(sz(a) + sz(b) - 1, 0);
+    int L = 32 - __builtin_clz(sz(res)), n = (1 << L), cut = (int)sqrt(M);
+    vector<C> inA(n), inB(n), outA(n), outB(n);
+
+    for (int i = 0; i < n; i++) {
+        if (i < sz(a)) inA[i] = C(a[i] / cut, a[i] % cut);
+        if (i < sz(b)) inB[i] = C(b[i] / cut, b[i] % cut);
+    }
+
+    fft(inA);
+    fft(inB);
+
+    for (int i = 0; i < n; i++) {
+        int j = -i & (n - 1);
+        C ax = inA[i] + conj(inA[j]);
+        C ay = inA[i] - conj(inA[j]);
+        C bx = inB[i] + conj(inB[j]);
+        C by = inB[i] - conj(inB[j]);
+        outA[j] = (ax * bx + ax * by) / (4.0 * n);
+        outB[j] = (ay * by * -1.0 + ay * bx) / (4.0 * n);
+    }
+
+    fft(outA);
+    fft(outB);
+
+    for (int i = 0; i < sz(res); i++) {
+        ll p = llround(outB[i].real()) % M;
+        ll q = (llround(outA[i].imag()) + llround(outB[i].imag())) % M;
+        ll r = llround(outA[i].real()) % M;
+        res[i] = ((r * cut % M + q) * cut % M + p) % M;
     }
 
     return res;
