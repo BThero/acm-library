@@ -14,11 +14,11 @@ void fft(vector<C> &a) {
     root[1] = croot[1] = 1.0;
 
     for (int k = 2; k < n; k *= 2) {
-		complex<long double> x = polar(1.0L, acos(-1.0L) / k);
-		
+        complex<long double> x = polar(1.0L, acos(-1.0L) / k);
+
         for (int i = k; i < 2 * k; i++) {
             root[i] = croot[i] = i & 1 ? croot[i / 2] * x : croot[i / 2];
-	    }
+        }
     }
 
     for (int k = 1; k < n; k *= 2) {
@@ -69,7 +69,7 @@ vector<ll> convMod(const vector<ll> &a, const vector<ll> &b, int M) {
     if (a.empty() || b.empty()) {
         return {};
     }
-    
+
     vector<ll> res(sz(a) + sz(b) - 1, 0);
     int L = 32 - __builtin_clz(sz(res)), n = (1 << L), cut = (int)sqrt(M);
     vector<C> inA(n), inB(n), outA(n), outB(n);
