@@ -36,3 +36,4 @@ struct Fenwick {
 };
 
 //для создание Fenwick<data_type> d(sizeOfFenwick) 
+//Индексация с 1
