@@ -1,6 +1,6 @@
-typedef complex<double> C;
+typedef complex<double> cd;
 
-void fft(vector<C> &a) {
+void fft(vector<cd> &a) {
     int n = sz(a), m = n / 2;
     vector<int> rev(n, 0);
 
@@ -9,7 +9,7 @@ void fft(vector<C> &a) {
         if (i < rev[i]) swap(a[i], a[rev[i]]);
     }
 
-    vector<C> root(n);
+    vector<cd> root(n);
     vector<complex<long double>> croot(n);
     root[1] = croot[1] = 1.0;
 
@@ -24,7 +24,7 @@ void fft(vector<C> &a) {
     for (int k = 1; k < n; k *= 2) {
         for (int i = 0; i < n; i += 2 * k) { 
             for (int j = 0; j < k; j++) {
-                C z = root[j + k] * a[i + j + k];
+                cd z = root[j + k] * a[i + j + k];
                 a[i + j + k] = a[i + j] - z;
                 a[i + j] += z;
             }
@@ -38,8 +38,13 @@ vector<ll> conv(const vector<ll> &a, const vector<ll> &b) {
     }
 
     vector<ll> res(sz(a) + sz(b) - 1, 0);
-    int L = 32 - __builtin_clz(sz(res)), n = (1 << L);
-    vector<C> in(n), out(n);
+    int n = 1;
+
+    while (n < sz(res)) {
+        n *= 2;
+    }
+
+    vector<cd> in(n), out(n);
 
     for (int i = 0; i < n; i++) {
         if (i < sz(a)) in[i].real(a[i]);
@@ -48,7 +53,7 @@ vector<ll> conv(const vector<ll> &a, const vector<ll> &b) {
 
     fft(in);
 
-    for (C &x : in) {
+    for (cd &x : in) {
         x *= x;
     }
 
@@ -72,11 +77,11 @@ vector<ll> convMod(const vector<ll> &a, const vector<ll> &b, int M) {
 
     vector<ll> res(sz(a) + sz(b) - 1, 0);
     int L = 32 - __builtin_clz(sz(res)), n = (1 << L), cut = (int)sqrt(M);
-    vector<C> inA(n), inB(n), outA(n), outB(n);
+    vector<cd> inA(n), inB(n), outA(n), outB(n);
 
     for (int i = 0; i < n; i++) {
-        if (i < sz(a)) inA[i] = C(a[i] / cut, a[i] % cut);
-        if (i < sz(b)) inB[i] = C(b[i] / cut, b[i] % cut);
+        if (i < sz(a)) inA[i] = cd(a[i] / cut, a[i] % cut);
+        if (i < sz(b)) inB[i] = cd(b[i] / cut, b[i] % cut);
     }
 
     fft(inA);
@@ -84,10 +89,10 @@ vector<ll> convMod(const vector<ll> &a, const vector<ll> &b, int M) {
 
     for (int i = 0; i < n; i++) {
         int j = -i & (n - 1);
-        C ax = inA[i] + conj(inA[j]);
-        C ay = inA[i] - conj(inA[j]);
-        C bx = inB[i] + conj(inB[j]);
-        C by = inB[i] - conj(inB[j]);
+        cd ax = inA[i] + conj(inA[j]);
+        cd ay = inA[i] - conj(inA[j]);
+        cd bx = inB[i] + conj(inB[j]);
+        cd by = inB[i] - conj(inB[j]);
         outA[j] = (ax * bx + ax * by) / (4.0 * n);
         outB[j] = (ay * by * -1.0 + ay * bx) / (4.0 * n);
     }
