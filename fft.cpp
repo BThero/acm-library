@@ -44,6 +44,10 @@ vector<ll> conv(const vector<ll> &a, const vector<ll> &b) {
         n *= 2;
     }
 
+    if (sz(res) == 1){
+        n = 2;
+    }
+
     vector<cd> in(n), out(n);
 
     for (int i = 0; i < n; i++) {
